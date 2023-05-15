@@ -1,12 +1,10 @@
-# terraform-equinix-template
+# terraform-equinix-github-runner
 
-<!-- TEMPLATE: Review all "TEMPLATE" comments and remove them when applied. -->
-<!-- TEMPLATE: replace "template" with the name of your project. The prefix "terraform-equinix-" informs the Terraform registry that this project is a Terraform module associated with the Equinix provider, preserve this prefix. -->
 [![Experimental](https://img.shields.io/badge/Stability-Experimental-red.svg)](https://github.com/equinix-labs/standards#about-uniform-standards)
-[![run-pre-commit-hooks](https://github.com/equinix-labs/terraform-equinix-template/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/equinix-labs/terraform-equinix-template/actions/workflows/pre-commit.yaml)
-[![generate-terraform-docs](https://github.com/equinix-labs/terraform-equinix-template/actions/workflows/documentation.yaml/badge.svg)](https://github.com/equinix-labs/terraform-equinix-template/actions/workflows/documentation.yaml)
+[![run-pre-commit-hooks](https://github.com/equinix-labs/terraform-equinix-github-runner/actions/workflows/pre-commit.yaml/badge.svg)](https://github.com/equinix-labs/terraform-equinix-github-runner/actions/workflows/pre-commit.yaml)
+[![generate-terraform-docs](https://github.com/equinix-labs/terraform-equinix-github-runner/actions/workflows/documentation.yaml/badge.svg)](https://github.com/equinix-labs/terraform-equinix-github-runner/actions/workflows/documentation.yaml)
 
-`terraform-equinix-template` is a minimal Terraform module that utilizes [Terraform providers for Equinix](https://registry.terraform.io/namespaces/equinix) to provision digital infrastructure and demonstrate higher level integrations.
+`terraform-equinix-github-runner` is a minimal Terraform module that utilizes [Terraform providers for Equinix](https://registry.terraform.io/namespaces/equinix) to provision digital infrastructure and demonstrate higher level integrations.
 
 <!-- TEMPLATE: Insert an image here of the infrastructure diagram. You can generate a starting image using instructions found at https://www.terraform.io/docs/cli/commands/graph.html#generating-images -->
 
@@ -32,8 +30,7 @@ terraform {
 }
 
 module "example" {
-  source = "github.com/equinix-labs/template"
-  # TEMPLATE: replace "template" with the name of the repo after the terraform-equinix- prefix.
+  source = "github.com/equinix-labs/github-runner
 
   # Published modules can be sourced as:
   # source = "equinix-labs/template/equinix"
