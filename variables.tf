@@ -1,21 +1,39 @@
-# TEMPLATE: All variables must have a description and should declare their type.
-# TEMPLATE: Set defaults whenever possible but do not set defaults for required properties.
-# TEMPLATE: Declare all variables in this file, sprawling declarations are difficult to identify.
-# TEMPLATE:
-# TEMPLATE: https://www.terraform.io/docs/language/values/variables.html
-# TEMPLATE: https://www.terraform.io/docs/language/expressions/types.html
-# TEMPLATE:
-
-# TEMPLATE: Replace sample variable described below with your own.
-variable "metal_project_id" {
+variable "runner_scope" {
   type        = string
-  description = "The example project id value defines what will be included in the example resource in main.tf. This example is descriptive."
-  sensitive   = false
+  description = "repo (:owner/:repo) or org (:organization)"
 }
 
-# TEMPLATE: Replace sample variable described below with your own.
-variable "metal_auth_token" {
+variable "personal_access_token" {
   type        = string
-  description = "The example auth token value defines what will be included in the example resource in main.tf. This example is descriptive."
+  description = "GitHub PAT (Personal Access Token)"
   sensitive   = true
+}
+
+variable "metal_project_id" {
+  type        = string
+  description = "Your Equinix Metal project ID, where you want to deploy your server"
+}
+
+variable "plan" {
+  type        = string
+  description = "Metal server type you plan to deploy"
+  default     = "c3.small.x86"
+}
+
+variable "operating_system" {
+  type        = string
+  description = "OS you want to deploy"
+  default     = "ubuntu_20_04"
+}
+
+variable "metro" {
+  type        = string
+  description = "Metal's Metro location you want to deploy your servers to"
+  default     = "ny"
+}
+
+variable "server_count" {
+  type        = number
+  description = "numbers of servers you want to deploy"
+  default     = 1
 }
