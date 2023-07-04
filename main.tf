@@ -23,19 +23,22 @@ resource "null_resource" "wait" {
   count = var.server_count
 
   triggers = {
-    hostname     = equinix_metal_device.runner[count.index].hostname
-    runner_scope = var.runner_scope
-    pat          = var.personal_access_token
+    id       = equinix_metal_device.runner[count.index].id
+    hostname = equinix_metal_device.runner[count.index].hostname
   }
 
   provisioner "local-exec" {
     quiet   = true
-    command = "/bin/bash ${path.module}/scripts/wait-runner-online.sh ${self.triggers.runner_scope} ${self.triggers.hostname}"
+    command = "/bin/bash ${path.module}/scripts/wait-runner-online.sh ${var.runner_scope} ${self.triggers.hostname}"
 
     environment = {
-      RUNNER_CFG_PAT = self.triggers.pat
+      RUNNER_CFG_PAT = var.personal_access_token
     }
   }
+}
+
+locals {
+  sensitive_pat = sensitive(var.personal_access_token)
 }
 
 resource "null_resource" "delete_script" {
@@ -44,7 +47,7 @@ resource "null_resource" "delete_script" {
   triggers = {
     hostname     = "metal-runner-${count.index}"
     runner_scope = var.runner_scope
-    pat          = var.personal_access_token
+    pat          = local.sensitive_pat
   }
 
   provisioner "local-exec" {
