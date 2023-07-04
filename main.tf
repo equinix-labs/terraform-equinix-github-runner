@@ -19,6 +19,24 @@ resource "equinix_metal_device" "runner" {
   tags = ["github-action-runner", "terraform"]
 }
 
+resource "null_resource" "wait" {
+  count = var.server_count
+
+  triggers = {
+    hostname     = equinix_metal_device.runner[count.index].hostname
+    runner_scope = var.runner_scope
+    pat          = var.personal_access_token
+  }
+
+  provisioner "local-exec" {
+    quiet   = true
+    command = "/bin/bash ${path.module}/scripts/wait-runner-online.sh ${self.triggers.runner_scope} ${self.triggers.hostname}"
+
+    environment = {
+      RUNNER_CFG_PAT = self.triggers.pat
+    }
+  }
+}
 
 resource "null_resource" "delete_script" {
   count = var.server_count
@@ -31,8 +49,9 @@ resource "null_resource" "delete_script" {
 
   provisioner "local-exec" {
     when    = destroy
-    command = "/bin/bash ${path.module}/scripts/delete-runner.sh ${self.triggers.runner_scope} ${self.triggers.hostname}"
     quiet   = true
+    command = "/bin/bash ${path.module}/scripts/delete-runner.sh ${self.triggers.runner_scope} ${self.triggers.hostname}"
+
     environment = {
       RUNNER_CFG_PAT = self.triggers.pat
     }

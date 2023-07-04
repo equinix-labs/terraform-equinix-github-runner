@@ -5,10 +5,15 @@ export DEBIAN_FRONTEND=noninteractive
 runner_scope=${1}
 runner_name=${2}
 
+function fatal() {
+	echo "error: $1" >&2
+	exit 1
+}
+
 case "$OSTYPE" in
-darwin*) echo "OSX" ;;
-linux*) echo "LINUX" ;;
-*) echo "unknown: $OSTYPE" ;;
+darwin*) echo "Running on: OSX" ;;
+linux*) echo "Running on: LINUX" ;;
+*) echo "unknown OS: $OSTYPE" ;;
 esac
 
 if [[ "$OSTYPE" =~ ^darwin ]]; then
@@ -21,16 +26,17 @@ elif [[ "$OSTYPE" =~ ^linux ]]; then
 		yum update -y
 		yum install jq curl -y
 	else
-		exit 1
+		fatal "apt-get or yum commands not found"
 	fi
 else
-	exit 1
+	fatal "your operating system is not supported"
 fi
 
 output=$(curl -s https://raw.githubusercontent.com/actions/runner/main/scripts/delete.sh | bash -s $runner_scope $runner_name)
 
 # Check if the output contains a not find runner error
-if [[ $output =~ "error: Could not find runner with name ${runner_name}" ]]; then
+pattern="error: Could not find runner with name ${runner_name}"
+if [[ $output =~ $pattern ]]; then
 	echo "Warning: Could not find runner with name ${runner_name}"
 	exit 0
 fi
