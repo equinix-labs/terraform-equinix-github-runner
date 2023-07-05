@@ -13,14 +13,16 @@ jobs:
   pre-commit:
     runs-on: ${{ matrix.os }}
     env:
+      GO_VERSION: ${{ matrix.go }}
       TF_VERSION: ${{ matrix.tf }}
       TFLINT_VERSION: ${{ matrix.tflint }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
         os: [ubuntu-latest]
-        tf: [1.3.0]
-        tflint: [v0.44.1]
+        tf: [1.4.0]
+        tflint: [v0.47.0]
+        go: ['1.20']
     permissions:
       pull-requests: write
       id-token: write
@@ -68,5 +70,12 @@ jobs:
         repo: aquasecurity/tfsec
         platform: linux
         arch: x86-64
+
+    - uses: actions/setup-go@v4
+      with:
+        go-version: ${{ env.GO_VERSION }}
+
+    - name: Install shfmt
+      run: go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
     - uses: pre-commit/action@v3.0.0
