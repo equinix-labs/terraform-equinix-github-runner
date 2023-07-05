@@ -19,8 +19,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        tf: [1.3.0]
-        tflint: [v0.44.1]
+        tf: [1.4.0]
+        tflint: [v0.47.0]
     permissions:
       pull-requests: write
       id-token: write
