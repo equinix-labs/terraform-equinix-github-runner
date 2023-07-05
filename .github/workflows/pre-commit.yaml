@@ -22,7 +22,7 @@ jobs:
         os: [ubuntu-latest]
         tf: [1.4.0]
         tflint: [v0.47.0]
-        go: [1.20]
+        go: ['1.20']
     permissions:
       pull-requests: write
       id-token: write
