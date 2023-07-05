@@ -69,20 +69,20 @@ jobs:
           runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
           if [ "${runner_status}" != "online" ]; then echo "runner is not online" && exit 1; fi
 
-      - name: Terraform Destroy
-        id: destroy
-        if: ${{ always() }}
-        run: terraform destroy -input=false -auto-approve
+      # - name: Terraform Destroy
+      #   id: destroy
+      #   if: ${{ always() }}
+      #   run: terraform destroy -input=false -auto-approve
 
-      - run: |
-          api_url="https://api.github.com/repos/${{ env.RUNNER_SCOPE }}/actions/runners?per_page=100"
-          headers="-H 'accept: application/vnd.github.everest-preview+json' -H 'authorization: token ${{ secrets.GITHUB_TOKEN }}'"
-          filter=".runners | .[] | select(.name == \"metal-runner-0\") | .status"
-          runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
-          if [ ! -z "${runner_status}" ]; then echo "runner not deleted correctly" && exit 1; fi
+      # - run: |
+      #     api_url="https://api.github.com/repos/${{ env.RUNNER_SCOPE }}/actions/runners?per_page=100"
+      #     headers="-H 'accept: application/vnd.github.everest-preview+json' -H 'authorization: token ${{ secrets.GITHUB_TOKEN }}'"
+      #     filter=".runners | .[] | select(.name == \"metal-runner-0\") | .status"
+      #     runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
+      #     if [ ! -z "${runner_status}" ]; then echo "runner not deleted correctly" && exit 1; fi
 
-      - name: Project Delete
-        if: ${{ always() }}
-        uses: equinix-labs/metal-sweeper-action@v0.5.1
-        env:
-          METAL_PROJECT_ID: ${{ steps.project.outputs.projectID }}
+      # - name: Project Delete
+      #   if: ${{ always() }}
+      #   uses: equinix-labs/metal-sweeper-action@v0.5.1
+      #   env:
+      #     METAL_PROJECT_ID: ${{ steps.project.outputs.projectID }}
