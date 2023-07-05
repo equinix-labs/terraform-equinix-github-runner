@@ -27,7 +27,7 @@ fi
 #--------------------------------------
 # Ensure online
 #--------------------------------------
-for ((i = 1; i <= 200; i++)); do
+for ((i = 1; i <= 30; i++)); do
 	runner_status=$(curl -s -X GET "${base_api_url}/${runner_scope}/actions/runners?per_page=100" -H "accept: application/vnd.github.everest-preview+json" -H "authorization: token ${RUNNER_CFG_PAT}" | jq -e -M -j ".runners | .[] | select(.name == \"${runner_name}\") | .status" || echo "")
 
 	if [ -z "${runner_status}" ]; then
@@ -43,4 +43,4 @@ for ((i = 1; i <= 200; i++)); do
 	sleep 10
 done
 
-fatal "Runner ${runner_name} still not online after 20 attempts"
+fatal "Runner ${runner_name} still not online after 30 attempts"
