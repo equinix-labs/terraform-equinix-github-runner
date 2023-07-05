@@ -11,4 +11,5 @@ module "example" {
   project_id            = var.project_id
   personal_access_token = var.personal_access_token
   runner_scope          = var.runner_scope
+  metro                 = "sv"
 }
