@@ -40,7 +40,7 @@ jobs:
 
       - name: Create temporary Metal project
         id: project
-        uses: equinix-labs/metal-project-action@v0
+        uses: equinix-labs/metal-project-action@v0.12.1
         with:
           userToken: ${{ secrets.METAL_AUTH_TOKEN }}
 
@@ -87,7 +87,7 @@ jobs:
 
       - name: Project Delete
         if: ${{ always() }}
-        uses: equinix-labs/metal-sweeper-action@v0
+        uses: equinix-labs/metal-sweeper-action@v0.5.1
         with:
           authToken: ${{ secrets.METAL_AUTH_TOKEN }}
           projectID: ${{ steps.project.outputs.projectID }}
