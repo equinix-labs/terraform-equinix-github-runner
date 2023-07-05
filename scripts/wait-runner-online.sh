@@ -10,28 +10,6 @@ function fatal() {
 	exit 1
 }
 
-case "$OSTYPE" in
-darwin*) echo "Running on: OSX" ;;
-linux*) echo "Running on: LINUX" ;;
-*) echo "unknown OS: $OSTYPE" ;;
-esac
-
-if [[ "$OSTYPE" =~ ^darwin ]]; then
-	brew install jq curl
-elif [[ "$OSTYPE" =~ ^linux ]]; then
-	if command -v apt-get >/dev/null; then
-		apt-get -qy update
-		apt-get -qy install jq curl
-	elif command -v yum >/dev/null; then
-		yum update -y
-		yum install jq curl -y
-	else
-		fatal "apt-get or yum commands not found"
-	fi
-else
-	fatal "your operating system is not supported"
-fi
-
 if [ -z "${runner_scope}" ]; then fatal "supply scope as argument 1"; fi
 if [ -z "${RUNNER_CFG_PAT}" ]; then fatal "RUNNER_CFG_PAT must be set before calling"; fi
 if [ -z "${runner_name}" ]; then runner_name=$(hostname); fi
