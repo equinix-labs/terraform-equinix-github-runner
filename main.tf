@@ -1,3 +1,5 @@
+
+
 resource "equinix_metal_device" "runner" {
   count = var.server_count
 
@@ -8,7 +10,7 @@ resource "equinix_metal_device" "runner" {
   metro            = var.metro
   operating_system = var.operating_system
   billing_cycle    = "hourly"
-  project_id       = var.metal_project_id
+  project_id       = var.project_id
 
   user_data = templatefile("scripts/user-data.sh", {
     personal_access_token = var.personal_access_token,

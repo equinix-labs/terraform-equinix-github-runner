@@ -1,6 +1,6 @@
 variable "runner_scope" {
   type        = string
-  description = "repo (:owner/:repo) or org (:organization)"
+  description = "To specify repositories, use the format ':owner/:repo'. For example, 'equinix-labs/terraform-equinix-github-runner'. To specify an organization, use the format ':organization'"
 }
 
 variable "personal_access_token" {
@@ -8,7 +8,7 @@ variable "personal_access_token" {
   description = "GitHub PAT (Personal Access Token)"
 }
 
-variable "metal_project_id" {
+variable "project_id" {
   type        = string
   description = "Your Equinix Metal project ID, where you want to deploy your server"
 }
