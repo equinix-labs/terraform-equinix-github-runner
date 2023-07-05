@@ -16,7 +16,9 @@ jobs:
     runs-on: ${{ matrix.os }}
     env:
       TERRAFORM_VERSION: ${{ matrix.tf }}
-      RUNNER_SCOPE: ${{ github.repository_owner }}/${{ github.repository }}
+      METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
+      TF_VAR_personal_access_token: ${{ secrets.GITHUB_TOKEN }}"
+      TF_VAR_runner_scope: ${{ github.repository_owner }}/${{ github.repository }}
     defaults:
       run:
         working-directory: ./examples/simple
@@ -41,14 +43,10 @@ jobs:
       - name: Create temporary Metal project
         id: project
         uses: equinix-labs/metal-project-action@v0.12.1
-        env:
-          METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
 
-      - name: Terraform Vars
+      - name: Terraform Extra Vars
         run: |
-          echo "TF_VAR_personal_access_token=tfacc-${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
           echo "TF_VAR_project_id=${{ steps.project.outputs.projectID }}" >> $GITHUB_ENV
-          echo "TF_VAR_runner_scope=${{ env.RUNNER_SCOPE }}" >> $GITHUB_ENV
 
       - name: Terraform Plan
         id: plan
@@ -66,9 +64,7 @@ jobs:
           api_url="https://api.github.com/repos/${{ env.RUNNER_SCOPE }}/actions/runners?per_page=100"
           headers="-H 'accept: application/vnd.github.everest-preview+json' -H 'authorization: token ${{ secrets.GITHUB_TOKEN }}'"
           filter=".runners | .[] | select(.name == \"metal-runner-0\") | .status"
-
           runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
-
           if [ "${runner_status}" != "online" ]; then echo "runner is not online" && exit 1; fi
 
       - name: Terraform Destroy
@@ -80,9 +76,7 @@ jobs:
           api_url="https://api.github.com/repos/${{ env.RUNNER_SCOPE }}/actions/runners?per_page=100"
           headers="-H 'accept: application/vnd.github.everest-preview+json' -H 'authorization: token ${{ secrets.GITHUB_TOKEN }}'"
           filter=".runners | .[] | select(.name == \"metal-runner-0\") | .status"
-
           runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
-
           if [ ! -z "${runner_status}" ]; then echo "runner not deleted correctly" && exit 1; fi
 
       - name: Project Delete
@@ -90,4 +84,3 @@ jobs:
         uses: equinix-labs/metal-sweeper-action@v0.5.1
         env:
           METAL_PROJECT_ID: ${{ steps.project.outputs.projectID }}
-          METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
