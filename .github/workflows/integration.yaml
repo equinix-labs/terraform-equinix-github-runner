@@ -43,6 +43,8 @@ jobs:
       - name: Create temporary Metal project
         id: project
         uses: equinix-labs/metal-project-action@main
+        with:
+          userToken: ${{ secrets.METAL_AUTH_TOKEN }}
 
       - name: Terraform Extra Vars
         run: |
