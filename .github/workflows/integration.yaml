@@ -1,0 +1,93 @@
+name: integration
+
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+      - '**.sh'
+
+jobs:
+  integrate:
+    name: Integration Test
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        tf: [1.4]
+    runs-on: ${{ matrix.os }}
+    env:
+      TERRAFORM_VERSION: ${{ matrix.tf }}
+      RUNNER_SCOPE: ${{ github.repository_owner }}/${{ github.repository }}
+    defaults:
+      run:
+        working-directory: ./examples/simple
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: $TERRAFORM_VERSION
+          terraform_wrapper: true
+
+      - name: Terraform Init
+        run: |
+          terraform init -input=false
+
+      - name: Terraform validate
+        run: |
+          terraform validate
+
+      - name: Create temporary Metal project
+        id: project
+        uses: equinix-labs/metal-project-action@v0
+        with:
+          userToken: ${{ secrets.METAL_AUTH_TOKEN }}
+
+      - name: Terraform Vars
+        run: |
+          echo "TF_VAR_personal_access_token=tfacc-${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+          echo "TF_VAR_project_id=${{ steps.project.outputs.projectID }}" >> $GITHUB_ENV
+          echo "TF_VAR_runner_scope=${{ env.RUNNER_SCOPE }}" >> $GITHUB_ENV
+
+      - name: Terraform Plan
+        id: plan
+        timeout-minutes: 10
+        run: terraform plan -out=tfplan -input=false
+
+      - name: Terraform Apply
+        id: apply
+        timeout-minutes: 20
+        run: terraform apply -input=false tfplan
+
+      - run: echo ${{ steps.apply.outputs.stdout }}
+
+      - run: |
+          api_url="https://api.github.com/repos/${{ env.RUNNER_SCOPE }}/actions/runners?per_page=100"
+          headers="-H 'accept: application/vnd.github.everest-preview+json' -H 'authorization: token ${{ secrets.GITHUB_TOKEN }}'"
+          filter=".runners | .[] | select(.name == \"metal-runner-0\") | .status"
+
+          runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
+
+          if [ "${runner_status}" != "online" ]; then echo "runner is not online" && exit 1; fi
+
+      - name: Terraform Destroy
+        id: destroy
+        if: ${{ always() }}
+        run: terraform destroy -input=false -auto-approve
+
+      - run: |
+          api_url="https://api.github.com/repos/${{ env.RUNNER_SCOPE }}/actions/runners?per_page=100"
+          headers="-H 'accept: application/vnd.github.everest-preview+json' -H 'authorization: token ${{ secrets.GITHUB_TOKEN }}'"
+          filter=".runners | .[] | select(.name == \"metal-runner-0\") | .status"
+
+          runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
+
+          if [ ! -z "${runner_status}" ]; then echo "runner not deleted correctly" && exit 1; fi
+
+      - name: Project Delete
+        if: ${{ always() }}
+        uses: equinix-labs/metal-sweeper-action@v0
+        with:
+          authToken: ${{ secrets.METAL_AUTH_TOKEN }}
+          projectID: ${{ steps.project.outputs.projectID }}
