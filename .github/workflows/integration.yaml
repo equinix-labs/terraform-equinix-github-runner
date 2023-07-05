@@ -17,7 +17,7 @@ jobs:
     env:
       TERRAFORM_VERSION: ${{ matrix.tf }}
       METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
-      TF_VAR_personal_access_token: ${{ secrets.GITHUB_TOKEN }}"
+      TF_VAR_personal_access_token: ${{ secrets.GITHUB_TOKEN }}
       TF_VAR_runner_scope: ${{ github.repository_owner }}/${{ github.repository }}
     defaults:
       run:
@@ -42,7 +42,7 @@ jobs:
 
       - name: Create temporary Metal project
         id: project
-        uses: equinix-labs/metal-project-action@v0.12.1
+        uses: equinix-labs/metal-project-action@main
 
       - name: Terraform Extra Vars
         run: |
@@ -67,10 +67,10 @@ jobs:
           runner_status=$(curl -s -X GET "$api_url" $headers | jq -M -j "$filter")
           if [ "${runner_status}" != "online" ]; then echo "runner is not online" && exit 1; fi
 
-      # - name: Terraform Destroy
-      #   id: destroy
-      #   if: ${{ always() }}
-      #   run: terraform destroy -input=false -auto-approve
+      - name: Terraform Destroy
+        id: destroy
+        if: ${{ always() }}
+        run: terraform destroy -input=false -auto-approve
 
       - run: |
           api_url="https://api.github.com/repos/${{ env.RUNNER_SCOPE }}/actions/runners?per_page=100"

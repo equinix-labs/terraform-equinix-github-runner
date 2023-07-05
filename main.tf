@@ -30,7 +30,7 @@ resource "null_resource" "wait" {
   }
 
   provisioner "local-exec" {
-    quiet   = false
+    quiet   = true
     command = "/bin/bash ${path.module}/scripts/wait-runner-online.sh ${var.runner_scope} ${self.triggers.hostname}"
 
     environment = {
