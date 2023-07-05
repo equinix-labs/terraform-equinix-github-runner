@@ -12,7 +12,7 @@ resource "equinix_metal_device" "runner" {
   billing_cycle    = "hourly"
   project_id       = var.project_id
 
-  user_data = templatefile("scripts/user-data.sh", {
+  user_data = templatefile("${path.module}/scripts/user-data.sh", {
     personal_access_token = var.personal_access_token,
     runner_scope          = var.runner_scope,
     }
