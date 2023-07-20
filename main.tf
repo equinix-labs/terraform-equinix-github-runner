@@ -21,6 +21,10 @@ resource "equinix_metal_device" "runner" {
   tags = ["github-action-runner", "terraform"]
 }
 
+locals {
+  nonsensitive_pat = nonsensitive(var.personal_access_token)
+}
+
 resource "null_resource" "wait" {
   count = var.server_count
 
@@ -34,13 +38,9 @@ resource "null_resource" "wait" {
     command = "/bin/bash ${path.module}/scripts/wait-runner-online.sh ${var.runner_scope} ${self.triggers.hostname}"
 
     environment = {
-      RUNNER_CFG_PAT = var.personal_access_token
+      RUNNER_CFG_PAT = local.nonsensitive_pat
     }
   }
-}
-
-locals {
-  sensitive_pat = sensitive(var.personal_access_token)
 }
 
 resource "null_resource" "delete_script" {
@@ -49,7 +49,7 @@ resource "null_resource" "delete_script" {
   triggers = {
     hostname     = "metal-runner-${count.index}"
     runner_scope = var.runner_scope
-    pat          = local.sensitive_pat
+    pat          = var.personal_access_token
   }
 
   provisioner "local-exec" {

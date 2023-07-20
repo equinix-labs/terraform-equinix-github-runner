@@ -6,6 +6,7 @@ variable "runner_scope" {
 variable "personal_access_token" {
   type        = string
   description = "GitHub PAT (Personal Access Token)"
+  sensitive   = true
 }
 
 variable "project_id" {
