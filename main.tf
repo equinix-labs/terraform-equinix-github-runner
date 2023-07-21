@@ -1,50 +1,64 @@
-# TEMPLATE: Before using "provider" blocks, consider https://www.terraform.io/docs/language/modules/develop/providers.html#implicit-provider-inheritance
-# TEMPLATE:
-# TEMPLATE: All ".tf" files are parsed at once. There is no benefit to numerically prefixed filenames. Keep all resource definitions in "main.tf".
-# TEMPLATE:
-# TEMPLATE: When main.tf becomes unwieldy, consider submodules (https://www.terraform.io/docs/language/modules/develop/structure.html)
-# TEMPLATE: and dependency inversion (https://www.terraform.io/docs/language/modules/develop/composition.html).
-# TEMPLATE:
 
-# TEMPLATE: Replace sample provider described below with your own.
-terraform {
-  required_version = ">= 1.3"
 
-  provider_meta "equinix" {
-    # TEMPLATE: Replace the module name with your own.
-    module_name = "template"
+resource "equinix_metal_device" "runner" {
+  count = var.server_count
+
+  depends_on = [null_resource.delete_script]
+
+  hostname         = "metal-runner-${count.index}"
+  plan             = var.plan
+  metro            = var.metro
+  operating_system = var.operating_system
+  billing_cycle    = "hourly"
+  project_id       = var.project_id
+
+  user_data = templatefile("${path.module}/templates/user-data.tftpl", {
+    personal_access_token = var.personal_access_token,
+    runner_scope          = var.runner_scope,
+    }
+  )
+
+  tags = ["github-action-runner", "terraform"]
+}
+
+locals {
+  nonsensitive_pat = nonsensitive(var.personal_access_token)
+}
+
+resource "null_resource" "wait" {
+  count = var.server_count
+
+  triggers = {
+    id       = equinix_metal_device.runner[count.index].id
+    hostname = equinix_metal_device.runner[count.index].hostname
   }
 
-  required_providers {
-    equinix = {
-      source  = "equinix/equinix"
-      version = ">= 1.8.0"
+  provisioner "local-exec" {
+    quiet   = true
+    command = "/bin/bash ${path.module}/scripts/wait-runner-online.sh ${var.runner_scope} ${self.triggers.hostname}"
+
+    environment = {
+      RUNNER_CFG_PAT = local.nonsensitive_pat
     }
   }
 }
 
-# TEMPLATE: Replace sample provider described below with your own.
-provider "equinix" {
-  auth_token = var.metal_auth_token
-}
+resource "null_resource" "delete_script" {
+  count = var.server_count
 
-# TEMPLATE: Replace sample resource described below with your own.
-resource "equinix_metal_device" "example_device" {
-  hostname         = "example-device"
-  plan             = "c3.small.x86"
-  metro            = "sv"
-  operating_system = "ubuntu_20_04"
-  billing_cycle    = "hourly"
-  project_id       = var.metal_project_id
-}
+  triggers = {
+    hostname     = "metal-runner-${count.index}"
+    runner_scope = var.runner_scope
+    pat          = var.personal_access_token
+  }
 
-# TEMPLATE: Run `terraform get` to install local module
-# TEMPLATE: Run `terraform init` to initialize backends and install plugins
-# TEMPLATE: Replace sample in-line local module described below with your own.
-# TEMPLATE
-module "inline_module" {
-  source = "./modules/inline-module"
+  provisioner "local-exec" {
+    when    = destroy
+    quiet   = true
+    command = "/bin/bash ${path.module}/scripts/delete-runner.sh ${self.triggers.runner_scope} ${self.triggers.hostname}"
 
-  # Define any required variables
-  inline_module_project_id = var.metal_project_id
+    environment = {
+      RUNNER_CFG_PAT = self.triggers.pat
+    }
+  }
 }

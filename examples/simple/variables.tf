@@ -1,21 +1,15 @@
-# TEMPLATE: All variables must have a description and should declare their type.
-# TEMPLATE: Set defaults whenever possible but do not set defaults for required properties.
-# TEMPLATE: Declare all variables in this file, sprawling declarations are difficult to identify.
-# TEMPLATE:
-# TEMPLATE: https://www.terraform.io/docs/language/values/variables.html
-# TEMPLATE: https://www.terraform.io/docs/language/expressions/types.html
-# TEMPLATE:
-
-# TEMPLATE: Replace sample variable described below with your own.
-variable "example_metal_project_id" {
+variable "runner_scope" {
   type        = string
-  description = "The example project id value defines what will be included in the example resource in main.tf. This example is descriptive."
-  sensitive   = false
+  description = "To specify repositories, use the format ':owner/:repo'. For example, 'equinix-labs/terraform-equinix-github-runner'. To specify an organization, use the format ':organization'"
 }
 
-# TEMPLATE: Replace sample variable described below with your own.
-variable "example_metal_auth_token" {
+variable "personal_access_token" {
   type        = string
-  description = "The example auth token value defines what will be included in the example resource in main.tf. This example is descriptive."
+  description = "GitHub PAT (Personal Access Token)"
   sensitive   = true
+}
+
+variable "project_id" {
+  type        = string
+  description = "Your Equinix Metal project ID, where you want to deploy your server"
 }
