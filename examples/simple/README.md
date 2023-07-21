@@ -15,7 +15,8 @@ terraform apply
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_equinix"></a> [equinix](#requirement\_equinix) | ~> 1.14 |
 
 ## Providers
 
@@ -35,13 +36,13 @@ No resources.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_example_metal_auth_token"></a> [example\_metal\_auth\_token](#input\_example\_metal\_auth\_token) | The example auth token value defines what will be included in the example resource in main.tf. This example is descriptive. | `string` | n/a | yes |
-| <a name="input_example_metal_project_id"></a> [example\_metal\_project\_id](#input\_example\_metal\_project\_id) | The example project id value defines what will be included in the example resource in main.tf. This example is descriptive. | `string` | n/a | yes |
+| <a name="input_personal_access_token"></a> [personal\_access\_token](#input\_personal\_access\_token) | GitHub PAT (Personal Access Token) | `string` | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Your Equinix Metal project ID, where you want to deploy your server | `string` | n/a | yes |
+| <a name="input_runner_scope"></a> [runner\_scope](#input\_runner\_scope) | To specify repositories, use the format ':owner/:repo'. For example, 'equinix-labs/terraform-equinix-github-runner'. To specify an organization, use the format ':organization' | `string` | n/a | yes |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_example_device_hostname"></a> [example\_device\_hostname](#output\_example\_device\_hostname) | The example output. In practice, output value reference implicit resource attributes declared in main.tf |
-| <a name="output_example_gateway_id"></a> [example\_gateway\_id](#output\_example\_gateway\_id) | The example output. In practice, output value reference implicit resource attributes declared in main.tf |
+| <a name="output_example_runner0"></a> [example\_runner0](#output\_example\_runner0) | Information about the Equinix metal device where the self-hosted runner is installed |
 <!-- END_TF_DOCS -->

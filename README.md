@@ -72,40 +72,46 @@ To view examples for how you can leverage this module, please see the [examples]
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3 |
-| <a name="requirement_equinix"></a> [equinix](#requirement\_equinix) | >= 1.8.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.14 |
+| <a name="requirement_equinix"></a> [equinix](#requirement\_equinix) | ~> 1.14 |
+| <a name="requirement_null"></a> [null](#requirement\_null) | ~> 3.2 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_equinix"></a> [equinix](#provider\_equinix) | >= 1.8.1 |
+| <a name="provider_equinix"></a> [equinix](#provider\_equinix) | ~> 1.14 |
+| <a name="provider_null"></a> [null](#provider\_null) | ~> 3.2 |
 
 ## Modules
 
-| Name | Source | Version |
-|------|--------|---------|
-| <a name="module_inline-module"></a> [inline-module](#module\_inline-module) | ./modules/inline-module | n/a |
+No modules.
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [equinix_metal_device.example](https://registry.terraform.io/providers/equinix/equinix/latest/docs/resources/metal_device) | resource |
+| [equinix_metal_device.runner](https://registry.terraform.io/providers/equinix/equinix/latest/docs/resources/metal_device) | resource |
+| [null_resource.delete_script](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
+| [null_resource.wait](https://registry.terraform.io/providers/hashicorp/null/latest/docs/resources/resource) | resource |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_example_auth_token"></a> [example\_auth\_token](#input\_example\_auth\_token) | The example auth token value defines what will be included in the example resource in main.tf. This example is descriptive. | `string` | n/a | yes |
-| <a name="input_example_project_id"></a> [example\_project\_id](#input\_example\_project\_id) | The example project id value defines what will be included in the example resource in main.tf. This example is descriptive. | `string` | n/a | yes |
+| <a name="input_personal_access_token"></a> [personal\_access\_token](#input\_personal\_access\_token) | GitHub PAT (Personal Access Token) | `string` | n/a | yes |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | Your Equinix Metal project ID, where you want to deploy your server | `string` | n/a | yes |
+| <a name="input_runner_scope"></a> [runner\_scope](#input\_runner\_scope) | To specify repositories, use the format ':owner/:repo'. For example, 'equinix-labs/terraform-equinix-github-runner'. To specify an organization, use the format ':organization' | `string` | n/a | yes |
+| <a name="input_metro"></a> [metro](#input\_metro) | Metal's Metro location you want to deploy your servers to | `string` | `"ny"` | no |
+| <a name="input_operating_system"></a> [operating\_system](#input\_operating\_system) | OS you want to deploy | `string` | `"ubuntu_20_04"` | no |
+| <a name="input_plan"></a> [plan](#input\_plan) | Metal server type you plan to deploy | `string` | `"c3.small.x86"` | no |
+| <a name="input_server_count"></a> [server\_count](#input\_server\_count) | numbers of servers you want to deploy | `number` | `1` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| <a name="output_example_device_hostname"></a> [example\_device\_hostname](#output\_example\_device\_hostname) | The example output. In practice, output value reference implicit resource attributes declared in main.tf |
-| <a name="output_example_gateway_id"></a> [example\_gateway\_id](#output\_example\_gateway\_id) | The example output. In practice, output value reference implicit resource attributes declared in main.tf |
+| <a name="output_devices"></a> [devices](#output\_devices) | List of metal devices with self-hosted runner installed |
 <!-- END_TF_DOCS -->
 ## Contributing
 
