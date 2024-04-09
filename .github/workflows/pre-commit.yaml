@@ -69,7 +69,7 @@ jobs:
       with:
         repo: aquasecurity/tfsec
         platform: linux
-        arch: x86-64
+        arch: amd64
 
     - uses: actions/setup-go@v5
       with:
