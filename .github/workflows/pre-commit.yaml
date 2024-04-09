@@ -65,11 +65,11 @@ jobs:
           ${{ runner.os }}-terraform-
 
     - name: Install tfsec
-      uses: jaxxstorm/action-install-gh-release@v1.5.0
+      uses: jaxxstorm/action-install-gh-release@v1.11.0
       with:
         repo: aquasecurity/tfsec
         platform: linux
-        arch: x86-64
+        arch: amd64
 
     - uses: actions/setup-go@v5
       with:
