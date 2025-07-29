@@ -4,7 +4,7 @@ terraform {
   required_providers {
     equinix = {
       source  = "equinix/equinix"
-      version = "~> 2.0"
+      version = "~> 4.0"
     }
     null = {
       source  = "hashicorp/null"
